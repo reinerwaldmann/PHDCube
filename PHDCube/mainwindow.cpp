@@ -6,6 +6,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    GraphicalWidget * wdg = new GraphicalWidget (this);
+   setCentralWidget(wdg);
+
 }
 
 MainWindow::~MainWindow()
