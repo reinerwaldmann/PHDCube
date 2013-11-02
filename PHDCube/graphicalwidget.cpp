@@ -4,14 +4,18 @@
 GraphicalWidget::GraphicalWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::GraphicalWidget)
+
 {
     drawShapes=0;
     ui->setupUi(this);
+
+
 }
 
 GraphicalWidget::~GraphicalWidget()
 {
     delete ui;
+
 }
 /*
 Scratch that, from the docs for QPainter..
@@ -33,7 +37,8 @@ void GraphicalWidget::drawStuff()
 
 void GraphicalWidget::paintEvent(QPaintEvent *)
 {
- QPainter painter(this);
+
+    QPainter painter (this);
 
  if (drawShapes) //or when smf changes in the program, like button pressed
  {
@@ -49,6 +54,8 @@ void GraphicalWidget::paintEvent(QPaintEvent *)
 
 void GraphicalWidget::on_pushButton_clicked()
 {//in this case button toggles whether stuff would be displayed
-  drawShapes = !drawShapes;
+
+
+    drawShapes = !drawShapes;
   update();
 }

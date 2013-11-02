@@ -20,6 +20,8 @@ public:
     void paintEvent(QPaintEvent *);
 
     bool drawShapes;
+
+
     
 private slots:
     void on_pushButton_clicked();
