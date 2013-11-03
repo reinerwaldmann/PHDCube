@@ -8,6 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+CONFIG+=console
+
 TARGET = PHDCube
 TEMPLATE = app
 
@@ -17,7 +19,8 @@ SOURCES += main.cpp\
     graphicalwidget.cpp
 
 HEADERS  += mainwindow.h \
-    graphicalwidget.h
+    graphicalwidget.h \
+    consolemsg.h
 
 FORMS    += mainwindow.ui \
     graphicalwidget.ui

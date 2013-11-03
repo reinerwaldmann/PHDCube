@@ -13,10 +13,11 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
-#include <QtWidgets/QDial>
+#include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QPushButton>
-#include <QtWidgets/QSlider>
+#include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -24,34 +25,61 @@ QT_BEGIN_NAMESPACE
 class Ui_GraphicalWidget
 {
 public:
+    QVBoxLayout *verticalLayout;
+    QGraphicsView *graphicsView;
+    QHBoxLayout *horizontalLayout;
+    QPushButton *scaleMinus;
     QPushButton *pushButton;
-    QSlider *rightLeftMove;
-    QDial *dialScale;
-    QSlider *topbottomMove;
+    QPushButton *pushButton_2;
+    QPushButton *scalePlus;
 
     void setupUi(QWidget *GraphicalWidget)
     {
         if (GraphicalWidget->objectName().isEmpty())
             GraphicalWidget->setObjectName(QStringLiteral("GraphicalWidget"));
-        GraphicalWidget->resize(400, 300);
-        pushButton = new QPushButton(GraphicalWidget);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(150, 240, 75, 30));
-        pushButton->setMinimumSize(QSize(0, 30));
+        GraphicalWidget->resize(551, 464);
+        verticalLayout = new QVBoxLayout(GraphicalWidget);
+        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
+        graphicsView = new QGraphicsView(GraphicalWidget);
+        graphicsView->setObjectName(QStringLiteral("graphicsView"));
+
+        verticalLayout->addWidget(graphicsView);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
+        scaleMinus = new QPushButton(GraphicalWidget);
+        scaleMinus->setObjectName(QStringLiteral("scaleMinus"));
+        scaleMinus->setMinimumSize(QSize(0, 30));
         QFont font;
         font.setPointSize(14);
+        scaleMinus->setFont(font);
+
+        horizontalLayout->addWidget(scaleMinus);
+
+        pushButton = new QPushButton(GraphicalWidget);
+        pushButton->setObjectName(QStringLiteral("pushButton"));
+        pushButton->setMinimumSize(QSize(0, 30));
         pushButton->setFont(font);
-        rightLeftMove = new QSlider(GraphicalWidget);
-        rightLeftMove->setObjectName(QStringLiteral("rightLeftMove"));
-        rightLeftMove->setGeometry(QRect(100, 270, 160, 16));
-        rightLeftMove->setOrientation(Qt::Horizontal);
-        dialScale = new QDial(GraphicalWidget);
-        dialScale->setObjectName(QStringLiteral("dialScale"));
-        dialScale->setGeometry(QRect(30, 210, 50, 64));
-        topbottomMove = new QSlider(GraphicalWidget);
-        topbottomMove->setObjectName(QStringLiteral("topbottomMove"));
-        topbottomMove->setGeometry(QRect(370, 20, 16, 160));
-        topbottomMove->setOrientation(Qt::Vertical);
+
+        horizontalLayout->addWidget(pushButton);
+
+        pushButton_2 = new QPushButton(GraphicalWidget);
+        pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
+        pushButton_2->setMinimumSize(QSize(0, 30));
+        pushButton_2->setFont(font);
+
+        horizontalLayout->addWidget(pushButton_2);
+
+        scalePlus = new QPushButton(GraphicalWidget);
+        scalePlus->setObjectName(QStringLiteral("scalePlus"));
+        scalePlus->setMinimumSize(QSize(0, 30));
+        scalePlus->setFont(font);
+
+        horizontalLayout->addWidget(scalePlus);
+
+
+        verticalLayout->addLayout(horizontalLayout);
+
 
         retranslateUi(GraphicalWidget);
 
@@ -61,7 +89,10 @@ public:
     void retranslateUi(QWidget *GraphicalWidget)
     {
         GraphicalWidget->setWindowTitle(QApplication::translate("GraphicalWidget", "Form", 0));
+        scaleMinus->setText(QApplication::translate("GraphicalWidget", "-", 0));
         pushButton->setText(QApplication::translate("GraphicalWidget", "\320\237\320\253\320\251\320\254!", 0));
+        pushButton_2->setText(QApplication::translate("GraphicalWidget", "\320\237\320\253\320\251\320\25411!", 0));
+        scalePlus->setText(QApplication::translate("GraphicalWidget", "+", 0));
     } // retranslateUi
 
 };

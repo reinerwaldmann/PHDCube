@@ -3,6 +3,8 @@
 
 #include <QWidget>
 #include <QPainter>
+#include <QShortcut>
+#include "consolemsg.h"
 
 namespace Ui {
 class GraphicalWidget;
@@ -19,12 +21,24 @@ public:
 
     void paintEvent(QPaintEvent *);
 
-    bool drawShapes;
+    void generate ();
 
 
-    
+
+    QHash <int, int>  dots;
+    int left, right;
+
+
+    //writing 'magic buttons' is an extremely bad habit
+
 private slots:
     void on_pushButton_clicked();
+
+    void on_scaleMinus_clicked();
+
+    void on_scalePlus_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::GraphicalWidget *ui;
