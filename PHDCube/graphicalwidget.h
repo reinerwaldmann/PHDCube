@@ -5,10 +5,14 @@
 #include <QPainter>
 #include <QShortcut>
 #include "consolemsg.h"
+#include <QGraphicsLineItem>
+#include <QGraphicsItem>
 
 namespace Ui {
 class GraphicalWidget;
 }
+
+struct dot {double x; double y;};
 
 class GraphicalWidget : public QWidget
 {
@@ -23,9 +27,28 @@ public:
 
     void generate ();
 
+    void generateEllipse();
+
+    bool belongsToEllipse (int x, int y);  //does it belong to ellipse border? 1 - yeah 0 - nope
+
+    void search();
 
 
-    QHash <int, int>  dots;
+
+    QGraphicsScene  * scene;
+
+    double  xleft;
+  double xright;
+    double ylow;
+    double yhigh;
+    double a;
+    double b;
+
+
+
+
+
+    QHash <int, double>  dots;
     int left, right;
 
 
