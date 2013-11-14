@@ -369,7 +369,9 @@ void GraphicalWidget::search()
 {
 dot rt, lt, rb, lb;
 
+double S (0);
 int y =20; //начнём с этого
+
 
 
 QGraphicsLineItem   * linesearchtr = scene->addLine(0, y, 1,y);
@@ -454,12 +456,17 @@ for (int x=0; x<xright+10; x++)
 
 
 
+        double ymin = qMax (rt.y, lt.y );     //так как экранные координаты повёрнуты наоборот по оси y
+         rt.y=ymin;
+         lt.y=ymin;
+
+linesearchb->setLine(rt.x, rt.y, lt.x, lt.y);
+
+S =fabs ( (rb.y - rt.y) * (rt.x-lt.x) );
 
 
-
-
-
-
+         qDebug ("current S: ");
+         qDebug (QString::number(S).toUtf8());
 
 }
 
