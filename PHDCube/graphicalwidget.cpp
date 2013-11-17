@@ -353,7 +353,7 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 
 //    return (   x1  *x1  /10000+  y1*y1/1600==1);
       double t = (x1*x1) / (a*a) + (y1*y1) / (b*b);
-      qDebug (QString::number(t).toUtf8());
+//      qDebug (QString::number(t).toUtf8());
 
       return ((t>0.99)&&(t<1.01))  ;
 
@@ -368,21 +368,23 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 void GraphicalWidget::search()
 {
 dot rt, lt, rb, lb;
-
 double S (0);
-int y =20; //начнём с этого
+
+int y = 20;
 
 
 
 QGraphicsLineItem   * linesearchtr = scene->addLine(0, y, 1,y);
 QGraphicsLineItem   * linesearchtl = scene->addLine(0, y, 1,y);
-
-
 QGraphicsLineItem   * linesearchb = scene->addLine(0, y, 1,y);
 QGraphicsLineItem   * linesearchr = scene->addLine(0, y, 1,y);
 QGraphicsLineItem   * linesearchl = scene->addLine(0, y, 1,y);
 
 
+//int y =20; //начнём с этого
+
+for (y = ylow+1; y<yhigh; y++)
+{
 
 //go right
 for (int x=0; x<xright+10; x++)
@@ -465,8 +467,84 @@ linesearchb->setLine(rt.x, rt.y, lt.x, lt.y);
 S =fabs ( (rb.y - rt.y) * (rt.x-lt.x) );
 
 
-         qDebug ("current S: ");
-         qDebug (QString::number(S).toUtf8());
+qDebug ("current y: ");
+qDebug (QString::number(y).toUtf8());
+
+qDebug ("current S: ");
+qDebug (QString::number(S).toUtf8());
+
+//struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
+
+rectangleRecord rr;
+rr.rt=rt;
+rr.lt=lt;
+rr.rb=rb;
+rr.lb=lb;
+rr.S = S;
+
+records.append(rr);
+
+
+
+//break;
+
+
+
+//sleep(1);
+
+
+
+
+}
+
+
+double Smax(0);
+rectangleRecord maxsrecord;
+
+
+rectangleRecord var;
+
+foreach (var, records) {
+
+
+    if (var.S > Smax)
+    {
+
+        Smax = var.S;
+        maxsrecord = var;
+    }
+
+
+}
+
+qDebug ("Biggest S ");
+qDebug (QString::number(Smax).toUtf8());
+
+
+
+
+QPointF tlQ (maxsrecord.lt.x, maxsrecord.lt.y);
+QPointF brQ (maxsrecord.rb.x, maxsrecord.rb.y);
+
+
+
+
+QGraphicsRectItem * rrrect =   scene->addRect(QRectF (tlQ, brQ), QPen (Qt::red));
+
+
+/*
+QGraphicsLineItem   * linesearchtr = scene->addLine(0, y, 1,y);
+QGraphicsLineItem   * linesearchtl = scene->addLine(0, y, 1,y);
+QGraphicsLineItem   * linesearchb = scene->addLine(0, y, 1,y);
+QGraphicsLineItem   * linesearchr = scene->addLine(0, y, 1,y);
+QGraphicsLineItem   * linesearchl = scene->addLine(0, y, 1,y);
+
+*/
+
+
+
+
+
 
 }
 

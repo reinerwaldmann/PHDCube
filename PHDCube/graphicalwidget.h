@@ -13,6 +13,9 @@ class GraphicalWidget;
 }
 
 struct dot {double x; double y;};
+struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
+
+
 
 class GraphicalWidget : public QWidget
 {
@@ -37,10 +40,15 @@ public:
 
     QGraphicsScene  * scene;
 
+
+    //cordinates of the extremes
     double  xleft;
-  double xright;
+    double xright;
     double ylow;
     double yhigh;
+
+
+    //coeffs of the ellipse (at this version the area is an ellipse
     double a;
     double b;
 
@@ -48,8 +56,13 @@ public:
 
 
 
+    //border of the desired area
     QHash <int, double>  dots;
     int left, right;
+
+
+
+    QList <rectangleRecord> records;
 
 
     //writing 'magic buttons' is an extremely bad habit
