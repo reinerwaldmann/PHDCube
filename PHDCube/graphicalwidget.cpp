@@ -34,7 +34,7 @@ GraphicalWidget::GraphicalWidget(QWidget *parent) :
 
 
 
-    on_pushButton_clicked();
+
 }
 
 GraphicalWidget::~GraphicalWidget()
@@ -340,7 +340,7 @@ for (int x=xleft; x<xright; x+=1)
 
 void GraphicalWidget::on_pushButton_2_clicked()
 {
-search();
+supersearch();
 }
 
 
@@ -365,26 +365,23 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 
 
 
-void GraphicalWidget::search()
+
+
+void GraphicalWidget::search(double iy)
 {
 dot rt, lt, rb, lb;
 double S (0);
 
-int y = 20;
+double y = iy;
+//int y = 20;
 
 
-
-QGraphicsLineItem   * linesearchtr = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchtl = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchb = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchr = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchl = scene->addLine(0, y, 1,y);
 
 
 //int y =20; //начнём с этого
 
-for (y = ylow+1; y<yhigh; y++)
-{
+//for (y = ylow+1; y<yhigh; y++)
+//{
 
 //go right
 for (int x=0; x<xright+10; x++)
@@ -480,6 +477,7 @@ rr.rt=rt;
 rr.lt=lt;
 rr.rb=rb;
 rr.lb=lb;
+
 rr.S = S;
 
 records.append(rr);
@@ -495,85 +493,80 @@ records.append(rr);
 
 
 
-}
+//}
 
 
-double Smax(0);
-rectangleRecord maxsrecord;
-
-
-rectangleRecord var;
-
-foreach (var, records) {
-
-
-    if (var.S > Smax)
-    {
-
-        Smax = var.S;
-        maxsrecord = var;
-    }
-
-
-}
-
-qDebug ("Biggest S ");
-qDebug (QString::number(Smax).toUtf8());
-
-
-
-
-QPointF tlQ (maxsrecord.lt.x, maxsrecord.lt.y);
-QPointF brQ (maxsrecord.rb.x, maxsrecord.rb.y);
-
-
-
-
-QGraphicsRectItem * rrrect =   scene->addRect(QRectF (tlQ, brQ), QPen (Qt::red));
-
-
-/*
-QGraphicsLineItem   * linesearchtr = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchtl = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchb = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchr = scene->addLine(0, y, 1,y);
-QGraphicsLineItem   * linesearchl = scene->addLine(0, y, 1,y);
-
-*/
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-/*
-
-  QGraphicsLineItem   * linesearch = scene->addLine(0, 10, 1,10);
-
-for (int  x =0; x<400; x++ )
+if (y==yhigh)
 {
-    linesearch->setLine(0,10,x,10);
 
-    if (belongsToEllipse(x,10))
-    {
-        qDebug ("ss");
+    double Smax(0);
+    rectangleRecord maxsrecord;
+    rectangleRecord var;
+    foreach (var, records) {
+        if (var.S > Smax)
+        {
 
-
-        return;
-
+            Smax = var.S;
+            maxsrecord = var;
+        }
     }
 
-}
-*/
+    qDebug ("Biggest S ");
+    qDebug (QString::number(Smax).toUtf8());
 
+    QPointF tlQ (maxsrecord.lt.x, maxsrecord.lt.y);
+    QPointF brQ (maxsrecord.rb.x, maxsrecord.rb.y);
+    QGraphicsRectItem * rrrect =   scene->addRect(QRectF (tlQ, brQ), QPen (Qt::red));
+}
+
+
+
+
+}
+
+
+
+
+ void GraphicalWidget::supersearch()
+ {
+     scene->clear();
+     on_pushButton_clicked();
+
+     timer = new QTimer (this);
+     connect(timer, SIGNAL(timeout()), this, SLOT(onTimerTicked()));
+
+
+     y=1;
+
+
+     timer->start(500);
+
+
+
+ linesearchtr = scene->addLine(0, y, 1,y);
+     linesearchtl = scene->addLine(0, y, 1,y);
+      linesearchb = scene->addLine(0, y, 1,y);
+     linesearchr = scene->addLine(0, y, 1,y);
+     linesearchl = scene->addLine(0, y, 1,y);
+
+
+
+
+
+ }
+
+
+ void GraphicalWidget::onTimerTicked()
+ {
+
+     search(y);
+     y++;
+     if (y>yhigh)
+        {
+         timer->stop();
+
+
+        }
+
+ }
 

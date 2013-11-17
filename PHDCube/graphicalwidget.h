@@ -34,7 +34,30 @@ public:
 
     bool belongsToEllipse (int x, int y);  //does it belong to ellipse border? 1 - yeah 0 - nope
 
-    void search();
+    void search(double iy);
+
+    void supersearch();
+    QTimer  * timer;
+
+
+
+    QGraphicsLineItem   * linesearchtr;
+    QGraphicsLineItem   * linesearchtl;
+    QGraphicsLineItem   * linesearchb;
+    QGraphicsLineItem   * linesearchr;
+    QGraphicsLineItem   * linesearchl;
+
+
+
+
+
+
+
+
+
+
+    //current y
+    double y;
 
 
 
@@ -75,6 +98,9 @@ private slots:
     void on_scalePlus_clicked();
 
     void on_pushButton_2_clicked();
+
+
+    void onTimerTicked();
 
 private:
     Ui::GraphicalWidget *ui;
