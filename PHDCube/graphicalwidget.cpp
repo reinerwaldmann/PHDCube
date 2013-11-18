@@ -318,17 +318,62 @@ return;
 void GraphicalWidget::generateEllipse()
 {
 
+    int spread=100;
+    //double lowborder=20;
 
-for (int x=xleft; x<xright; x+=1)
+
+    //first stage: edge points
+    qsrand(QTime::currentTime().msec()); //seeding random generator
+
+    double shuffle;
+
+
+
+for (int x=xleft; x<xright+1; x+=1)
 {
 
-    dots.insertMulti(x,   sqrt( fabs( ((double) 1-(x*x)/(a*a))*(b*b) ))  );
-    dots.insertMulti(x, -1 *    sqrt(  fabs(    (((double) 1-(x*x)/(a*a))*(b*b) ) ) ) );
+    shuffle = qrand() %  spread;
+
+    dots.insertMulti(x,    shuffle+  sqrt( fabs( ((double) 1-(x*x)/(a*a))*(b*b) ))  );
+    dots.insertMulti(x, -1 *  (shuffle+  sqrt(  fabs(    (((double) 1-(x*x)/(a*a))*(b*b) ) ) ) ));
 
 }
 
+/*
+int xx;
+
+QString rr;
 
 
+foreach (xx, dots.keys())
+{
+
+rr.append( QString::number(xx).toUtf8());
+rr.append( ";")   ;
+
+
+rr.append(  QString::number(dots.values(xx)[0]));
+rr.append( ";")   ;
+
+
+
+    if (dots.values(xx).size()>1)
+    {
+
+        rr.append(  QString::number(dots.values(xx)[1]));
+
+        rr.append( "\n")   ;
+    }
+
+
+
+
+
+}
+    qDebug (rr.toUtf8());
+
+*/
+//exit (0);
 
 
 }
@@ -347,18 +392,37 @@ supersearch();
 bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellipse border? 1 - yeah 0 - nope
 {
 
+
+    if (!dots.contains(x))
+    {
+        qDebug ("shit happens");
+        qDebug (QString::number(x).toUtf8());
+        return 0;
+
+    }
+
+    if  (( (double)y>dots.values(x)[0]-4 )&&( (double)y<dots.values(x)[0]+4 )) return 1;
+
+    if (dots.values(x).size()>1)
+    {
+        if  (( (double)y>dots.values(x)[1]-4 )&&( y<dots.values(x)[1]+4 )) return 1;
+
+    }
+
+
+return 0;
+
+
+
+/*
     int x1 = x;
     int y1= y;
 
-
-//    return (   x1  *x1  /10000+  y1*y1/1600==1);
       double t = (x1*x1) / (a*a) + (y1*y1) / (b*b);
-//      qDebug (QString::number(t).toUtf8());
-
       return ((t>0.99)&&(t<1.01))  ;
 
 
-
+*/
 
 
 }
@@ -496,8 +560,15 @@ records.append(rr);
 //}
 
 
+
+
 if (y==yhigh)
 {
+
+    //максимально возможная площадь, хто больше - невалиден
+    double maxS= ( fabs    (yhigh - ylow) ) * (fabs (xright - xleft) );
+    qDebug (QString::number(maxS).toUtf8());
+    // в нашем случае это площадь, которая примерно ограничивает нашу область
 
     double Smax(0);
     rectangleRecord maxsrecord;
@@ -506,8 +577,10 @@ if (y==yhigh)
         if (var.S > Smax)
         {
 
-            Smax = var.S;
-            maxsrecord = var;
+            if (var.S< maxS  )
+
+            {   Smax = var.S;
+                maxsrecord = var; }
         }
     }
 
