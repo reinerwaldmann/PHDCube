@@ -73,6 +73,20 @@ void GraphicalWidget::on_pushButton_clicked()
 {
 
 
+    saveAsImage();
+    return;
+
+
+}
+
+
+
+
+
+void GraphicalWidget::pregen()
+
+{
+
     generateEllipse();
 
 
@@ -217,7 +231,9 @@ if ( QGraphicsItem *item =ui->graphicsView->itemAt(40+200+10, -70+80/2)  )
 }
 */
 
+
 }
+
 
 
 void GraphicalWidget::on_scaleMinus_clicked()
@@ -318,7 +334,9 @@ return;
 void GraphicalWidget::generateEllipse()
 {
 
-    int spread=100;
+    //int spread=50;
+    int spread=ui->spinBoxSpread->value();
+
     //double lowborder=20;
 
 
@@ -392,6 +410,7 @@ supersearch();
 bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellipse border? 1 - yeah 0 - nope
 {
 
+    int paranoid=4;
 
     if (!dots.contains(x))
     {
@@ -401,11 +420,11 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 
     }
 
-    if  (( (double)y>dots.values(x)[0]-4 )&&( (double)y<dots.values(x)[0]+4 )) return 1;
+    if  (( (double)y>dots.values(x)[0]-paranoid )&&( (double)y<dots.values(x)[0]+paranoid )) return 1;
 
     if (dots.values(x).size()>1)
     {
-        if  (( (double)y>dots.values(x)[1]-4 )&&( y<dots.values(x)[1]+4 )) return 1;
+        if  (( (double)y>dots.values(x)[1]-paranoid )&&( y<dots.values(x)[1]+paranoid )) return 1;
 
     }
 
@@ -497,7 +516,7 @@ for (int x=0; x<xright+10; x++)
 
         }
 
-
+//right-top
 
         for (int y=rb.y-2; y>rb.y-100;y--)   //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
         {
@@ -603,7 +622,13 @@ if (y==yhigh)
  void GraphicalWidget::supersearch()
  {
      scene->clear();
-     on_pushButton_clicked();
+     //on_pushButton_clicked();
+
+
+     pregen();
+
+
+
 
      timer = new QTimer (this);
      connect(timer, SIGNAL(timeout()), this, SLOT(onTimerTicked()));
@@ -643,3 +668,20 @@ if (y==yhigh)
 
  }
 
+ bool GraphicalWidget::saveAsImage()
+ {
+
+     QImage img(1024,768,QImage::Format_ARGB32_Premultiplied);
+     QPainter p(&img);
+     scene->render(&p);
+     p.end();
+
+
+
+
+     img.save(QString("images/img")+QDateTime::currentDateTime().toString("dd.MM.yyyy_hh:mm:ss") +".png");
+     //img.save("sheisse.png");
+
+
+return 1;
+ }

@@ -16,7 +16,9 @@
 #include <QtWidgets/QGraphicsView>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
+#include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
 
@@ -30,6 +32,8 @@ public:
     QHBoxLayout *horizontalLayout;
     QPushButton *scaleMinus;
     QPushButton *pushButton;
+    QLabel *label;
+    QSpinBox *spinBoxSpread;
     QPushButton *pushButton_2;
     QPushButton *scalePlus;
 
@@ -63,6 +67,18 @@ public:
 
         horizontalLayout->addWidget(pushButton);
 
+        label = new QLabel(GraphicalWidget);
+        label->setObjectName(QStringLiteral("label"));
+
+        horizontalLayout->addWidget(label);
+
+        spinBoxSpread = new QSpinBox(GraphicalWidget);
+        spinBoxSpread->setObjectName(QStringLiteral("spinBoxSpread"));
+        spinBoxSpread->setMinimum(1);
+        spinBoxSpread->setMaximum(100);
+
+        horizontalLayout->addWidget(spinBoxSpread);
+
         pushButton_2 = new QPushButton(GraphicalWidget);
         pushButton_2->setObjectName(QStringLiteral("pushButton_2"));
         pushButton_2->setMinimumSize(QSize(0, 30));
@@ -90,8 +106,9 @@ public:
     {
         GraphicalWidget->setWindowTitle(QApplication::translate("GraphicalWidget", "Form", 0));
         scaleMinus->setText(QApplication::translate("GraphicalWidget", "-", 0));
-        pushButton->setText(QApplication::translate("GraphicalWidget", "\320\237\320\253\320\251\320\254!", 0));
-        pushButton_2->setText(QApplication::translate("GraphicalWidget", "\320\237\320\253\320\251\320\25411!", 0));
+        pushButton->setText(QApplication::translate("GraphicalWidget", "\320\241\320\276\321\205\321\200\320\260\320\275\320\270\321\202\321\214", 0));
+        label->setText(QApplication::translate("GraphicalWidget", "\320\240\320\260\320\267\320\261\321\200\320\276\321\201", 0));
+        pushButton_2->setText(QApplication::translate("GraphicalWidget", "\320\246\320\270\320\272\320\273", 0));
         scalePlus->setText(QApplication::translate("GraphicalWidget", "+", 0));
     } // retranslateUi
 

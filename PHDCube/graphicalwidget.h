@@ -28,6 +28,8 @@ public:
 
     void paintEvent(QPaintEvent *);
 
+    void pregen();
+
     void generate ();
 
     void generateEllipse();
@@ -38,6 +40,8 @@ public:
 
     void supersearch();
     QTimer  * timer;
+
+    bool saveAsImage();
 
 
 
