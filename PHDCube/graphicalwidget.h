@@ -12,7 +12,24 @@ namespace Ui {
 class GraphicalWidget;
 }
 
-struct dot {double x; double y;};
+struct dot {
+
+    //dot(double ix, double iy){x=ix; y=iy;  }
+    template  <class Type, class Type2> dot (Type ix, Type2 iy )
+    {
+        x=(double)ix;
+        y=(double) (iy);
+
+    }
+
+    dot ()
+    {
+    x=0;
+    y=0;
+    }
+
+            double x; double y;};
+
 struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
 
 
@@ -36,12 +53,23 @@ public:
 
     bool belongsToEllipse (int x, int y);  //does it belong to ellipse border? 1 - yeah 0 - nope
 
+    bool dotBelongsToRect (dot lt, dot rt, dot lb, dot rb);
+    //1 - mean, that some point from dots belongs to the rectangular area
+    //0 - means not
+
+
+
+
     void search(double iy);
 
     void supersearch();
     QTimer  * timer;
 
     bool saveAsImage();
+
+    void interpolation();
+    /* делает границу области непрерывной и по x и по y в дискрете 1 */
+
 
 
 
@@ -85,6 +113,11 @@ public:
 
     //border of the desired area
     QHash <int, double>  dots;
+
+    QList <dot> dotslist; //mising y points interpolized
+
+
+
     int left, right;
 
 

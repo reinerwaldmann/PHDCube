@@ -277,8 +277,7 @@ void GraphicalWidget::generate()
 
         dots.insertMulti(i,   lowborder+ qrand() % (int) (highborder-lowborder));
         dots.insertMulti(i, -1*  (lowborder+ qrand() % (int) (highborder-lowborder)));
-
-
+        qDebug( QString::number( dots.values(i)[0]).toUtf8()  );
 
     }
 
@@ -315,13 +314,13 @@ return;
         {
 
             QString ggg= QString ("Error accessing key").append(QString::number(t)) ;
-            qDebug (ggg.toUtf8());
+          //  qDebug (ggg.toUtf8());
                continue;
         }
 
 
         QString sss = QString::number( t).append("\t").append (  QString::number( dots.values(t)[0]).append("\t").append(QString::number( dots.values(t)[1])  ));
-        qDebug (sss.toUtf8());
+       // qDebug (sss.toUtf8());
 
     }
 
@@ -354,6 +353,13 @@ for (int x=xleft; x<xright+1; x+=1)
 
     dots.insertMulti(x,    shuffle+  sqrt( fabs( ((double) 1-(x*x)/(a*a))*(b*b) ))  );
     dots.insertMulti(x, -1 *  (shuffle+  sqrt(  fabs(    (((double) 1-(x*x)/(a*a))*(b*b) ) ) ) ));
+
+
+    qDebug( QString::number( dots.values(x)[0]).toUtf8()  );
+    qDebug( QString::number( dots.values(x)[1]).toUtf8()  );
+
+
+
 
 }
 
@@ -394,6 +400,9 @@ rr.append( ";")   ;
 //exit (0);
 
 
+interpolation();
+
+
 }
 
 
@@ -414,9 +423,9 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 
     if (!dots.contains(x))
     {
-        qDebug ("shit happens");
+       /* qDebug ("shit happens");
         qDebug (QString::number(x).toUtf8());
-        return 0;
+       */ return 0;
 
     }
 
@@ -444,6 +453,32 @@ return 0;
 */
 
 
+}
+
+
+
+bool GraphicalWidget::dotBelongsToRect (dot lt, dot rt, dot lb, dot rb)
+//1 - mean, that some point from dots belongs to the rectangular area
+//0 - means not
+{
+QList <int > keys = dots.keys();
+int key;
+double val;
+foreach  (key, keys)
+{
+
+
+    foreach (val, dots.values(key))
+
+    {
+        if (((key<=rt.x)&&(key>=lt.x)) && ( (val>=rb.y)&&(val<=rt.y)))
+        {
+            return 1;
+        }
+    }
+}
+
+return 0;
 }
 
 
@@ -546,13 +581,13 @@ linesearchb->setLine(rt.x, rt.y, lt.x, lt.y);
 
 S =fabs ( (rb.y - rt.y) * (rt.x-lt.x) );
 
-
+/*
 qDebug ("current y: ");
 qDebug (QString::number(y).toUtf8());
 
 qDebug ("current S: ");
 qDebug (QString::number(S).toUtf8());
-
+*/
 //struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
 
 rectangleRecord rr;
@@ -586,7 +621,7 @@ if (y==yhigh)
 
     //максимально возможная площадь, хто больше - невалиден
     double maxS= ( fabs    (yhigh - ylow) ) * (fabs (xright - xleft) );
-    qDebug (QString::number(maxS).toUtf8());
+   qDebug (QString::number(maxS).toUtf8());
     // в нашем случае это площадь, которая примерно ограничивает нашу область
 
     double Smax(0);
@@ -684,4 +719,105 @@ if (y==yhigh)
 
 
 return 1;
+ }
+
+
+
+ void GraphicalWidget::interpolation()
+ /* делает границу области непрерывной и по x и по y в дискрете 1 */
+ {
+     /*
+    QHash <int, double>  dots;
+    QList <dot> dotslist; //mising y points interpolized
+*/
+
+     dotslist.append(dot(xleft, 0));
+     for (int x=xleft; x<xright; x++)
+     {
+
+
+         if (!dots.count(x))
+         {
+                continue;
+         }
+
+
+
+         if (!dots.count(x+1))
+         {
+               continue;
+         }
+
+
+         dotslist.append (dot (x, dots.values(x)[0]));
+
+
+         if (dots.values(x)[0]<dots.values(x+1)[0]-1)
+             {
+             for (int i=dots.values(x)[0]; i<dots.values(x+1)[0]-1; i++)
+                {
+                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+                }
+
+             }
+
+         if (dots.values(x)[0]>dots.values(x+1)[0]-1)
+             {
+             for (int i=dots.values(x)[0]; i>dots.values(x+1)[0]-1; i--)
+                {
+                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+                }
+
+             }
+
+
+
+
+
+
+
+     }
+
+
+
+     dotslist.append(dot(xright, 0));
+
+
+     for (int x=xright; x>xleft; x--)
+     {
+         if (!dots.count(x))
+         {
+               continue;
+         }
+
+
+         if (!dots.count(x-1))
+         {
+               continue;
+         }
+
+dotslist.append (dot (x, dots.values(x)[1]));
+
+      /*   for (int i=dots.values(x)[1]; i<dots.values(x-1)[1]-1; i++)
+            {
+             dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[1]-dots.values(x)[1]  )  )*(i-dots.values(x)[1]), i ));
+            }
+*/
+     }
+
+
+//for debugging
+
+
+     foreach (dot t, dotslist)
+     {
+         qDebug ("x=" );
+         qDebug (QString::number(t.x).toUtf8() );
+         qDebug ("y=" );
+         qDebug (QString::number(t.y).toUtf8() );
+         qDebug ( "\n");
+
+     }
+
+
  }
