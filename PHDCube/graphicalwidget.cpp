@@ -349,7 +349,9 @@ void GraphicalWidget::generateEllipse()
 for (int x=xleft; x<xright+1; x+=1)
 {
 
-    shuffle = qrand() %  spread;
+
+
+    shuffle = spread?qrand() %  spread : 0;
 
     dots.insertMulti(x,    shuffle+  sqrt( fabs( ((double) 1-(x*x)/(a*a))*(b*b) ))  );
     dots.insertMulti(x, -1 *  (shuffle+  sqrt(  fabs(    (((double) 1-(x*x)/(a*a))*(b*b) ) ) ) ));
@@ -751,21 +753,44 @@ return 1;
 
          dotslist.append (dot (x, dots.values(x)[0]));
 
+         qDebug ("Known Point:" );
+         qDebug (QString::number(x).toUtf8() );
+         qDebug (QString::number(dots.values(x)[0]).toUtf8() );
+         qDebug ("--" );
+
+
+
 
          if (dots.values(x)[0]<dots.values(x+1)[0]-1)
              {
-             for (int i=dots.values(x)[0]; i<dots.values(x+1)[0]-1; i++)
+             for (int i=dots.values(x)[0]+1; i<dots.values(x+1)[0]-1; i++)
                 {
                  dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-                }
+
+                qDebug ("First part:" );
+                 qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
+
+
+
 
              }
 
-         if (dots.values(x)[0]>dots.values(x+1)[0]-1)
+             }
+
+
+
+         if (dots.values(x)[0]>dots.values(x+1)[0]+1)
              {
-             for (int i=dots.values(x)[0]; i>dots.values(x+1)[0]-1; i--)
+             for (int i=dots.values(x)[0]-1; i>dots.values(x+1)[0]-1; i--)
                 {
-                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+                 dotslist.append(dot (i+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+
+                 qDebug ("Second part:" );
+                  qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+                  qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
+
+
                 }
 
              }
@@ -796,7 +821,7 @@ return 1;
                continue;
          }
 
-dotslist.append (dot (x, dots.values(x)[1]));
+//dotslist.append (dot (x, dots.values(x)[1]));
 
       /*   for (int i=dots.values(x)[1]; i<dots.values(x-1)[1]-1; i++)
             {
@@ -808,7 +833,7 @@ dotslist.append (dot (x, dots.values(x)[1]));
 
 //for debugging
 
-
+/*
      foreach (dot t, dotslist)
      {
          qDebug ("x=" );
@@ -818,6 +843,6 @@ dotslist.append (dot (x, dots.values(x)[1]));
          qDebug ( "\n");
 
      }
-
+*/
 
  }
