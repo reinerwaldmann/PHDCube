@@ -81,6 +81,54 @@ void GraphicalWidget::on_pushButton_clicked()
 
 
 
+void GraphicalWidget::transformToRingList()
+{
+//from ellipse list to the ring list
+
+    ringList.append(dot(xleft,0));
+
+
+    for (int x=xleft+1; x<xright; x++)
+    {
+         if (!dots.count(x))
+        {
+            QString ggg= QString ("transformToRingList: Error accessing key").append(QString::number(x)) ;
+            qDebug (ggg.toUtf8());
+               continue;
+        }
+
+         ringList.append(dot(x, dots.values(x)[1]));
+    }
+
+
+    ringList.append(dot(xright,0));
+
+
+
+
+    for (int x=xright-1; x>xleft; x--)
+    {
+
+        if (!dots.count(x))
+        {
+
+            QString ggg= QString ("transformToRingList: Error accessing key").append(QString::number(x)) ;
+            qDebug (ggg.toUtf8());
+               continue;
+        }
+
+        ringList.append(dot (x, dots.values(x)[0]));
+
+
+    }
+
+
+
+
+}
+
+
+
 
 
 void GraphicalWidget::pregen()
@@ -90,7 +138,7 @@ void GraphicalWidget::pregen()
     generateEllipse();
 
 
-
+transformToRingList();
 
 
 //QGraphicsLineItem* rect = scene->addLine(-10, 0, 500,500);
@@ -102,23 +150,6 @@ ui->graphicsView->show();
 
 QGraphicsLineItem* line = scene->addLine(0, -100, 0, 100, QPen (Qt::blue));
 QGraphicsLineItem* line1 = scene->addLine(-300, 0, 300, 0, QPen (Qt::blue));
-
-/*QGraphicsLineItem* line2 = scene->addLine(40, -70+80/2, 40+200, -70+80/2, QPen (Qt::blue));
-QGraphicsLineItem* line3 = scene->addLine(40+200/2, -70, 40+200/2, -70+80, QPen (Qt::blue));
-*/
-//in this branch we use ellipse as a range,
-//itemAt to detect stuff
-//we can use elliptical equations to determine if a point
-//belongs to our area
-
-//border is included in the area!
-
-
-
-
-//QGraphicsEllipseItem  *  ellipse = scene->addEllipse(-40,-20,80,40);
-
-
 
 
 
@@ -132,51 +163,20 @@ QGraphicsLineItem* line3 = scene->addLine(40+200/2, -70, 40+200/2, -70+80, QPen 
  *
  **/
 
-/*
-for (int t=-20; t<20; t+=2)
-
-
-{
-
-    QGraphicsLineItem* lineX = scene->addLine(-40, t, -35, t, QPen (Qt::red));
-
-int k=-40;
-while (1)
-{
-k++;
-    if (k>100)
-    {
-        qDebug  ("Process of searching broken 'cause went out of all borders");
-        break; //if k>right.x , that's for breaking the process if all went wrong
-    }
-
-    lineX->setLine(-40, t, k, t);
-
-    //if (k*k/(160  )   )
-
-    if ( belongsToEllipse(k,t) ) break;
-
-
-
-}
-
-qDebug (QString::number(t).toUtf8() );
-
-qDebug (QString::number(k).toUtf8() );
-
-
-}
-
-*/
-
-
 
 
 //magic of creating polygons
 
 QPolygonF  polygon;
 
-polygon<< QPointF(xleft, 0);
+foreach (dot d, ringList)
+{
+    polygon<<QPointF(d.x, d.y);
+
+}
+
+
+/*polygon<< QPointF(xleft, 0);
 
 
 
@@ -216,7 +216,7 @@ for (int x=xright-1; x>xleft; x--)
     polygon <<QPointF(x, dots.values(x)[0] );
 
 }
-
+*/
 
 
 QGraphicsPolygonItem * polygonitem = scene->addPolygon(polygon);
@@ -733,6 +733,58 @@ return 1;
     QList <dot> dotslist; //mising y points interpolized
 */
 
+
+      for (int x=0; k<ringList.size(); x++)
+     {
+        dotslist.append(ringList.at(x));
+
+        //FIRST PART: POSITIVE
+        int i;
+           if (ringList.at(x)<ringList.at(x+1)-1)
+            {
+            //for (int i=dots.values(x)[0]+1; i<dots.values(x+1)[0]-1; i++)
+
+               i=ringList.at(x);
+            do
+               {
+                dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+               qDebug ("First part:" );
+                qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+                qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
+
+            }
+               while (i<ringList.at(x+1)-1);
+
+            }
+
+
+
+        if (ringList.at(x)>ringList.at(x+1)+1)
+            {
+
+              i=ringList.at(x)-1;
+
+           do {
+                dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+
+               /* qDebug ("Second part:" );
+                qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+                qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
+                i--;
+            }
+
+            while (i>dots.values(x+1)[0]+1);
+            }
+
+     }
+
+return;
+
+
+
+
+
+
      dotslist.append(dot(xleft, 0));
      for (int x=xleft; x<xright; x++)
      {
@@ -757,6 +809,12 @@ return 1;
          qDebug (QString::number(x).toUtf8() );
          qDebug (QString::number(dots.values(x)[0]).toUtf8() );
          qDebug ("--" );
+  /*       qDebug ("EndOfInterpolation:" );
+         qDebug (QString::number(x+1).toUtf8() );
+         qDebug (QString::number(dots.values(x+1)[0]).toUtf8() );
+         qDebug ("--" );
+*/
+
 
 
 
@@ -782,9 +840,12 @@ return 1;
 
          if (dots.values(x)[0]>dots.values(x+1)[0]+1)
              {
-             for (int i=dots.values(x)[0]-1; i>dots.values(x+1)[0]-1; i--)
+
+
+
+             /*for (int i=dots.values(x)[0]-1; i>dots.values(x+1)[0]+1;)
                 {
-                 dotslist.append(dot (i+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
 
                  qDebug ("Second part:" );
                   qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
@@ -792,6 +853,23 @@ return 1;
 
 
                 }
+
+             */
+
+             int i=dots.values(x)[0]-1;
+
+            do {
+                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
+
+                /* qDebug ("Second part:" );
+                 qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
+                 i--;
+             }
+
+             while (i>dots.values(x+1)[0]+1);
+
+
 
              }
 
