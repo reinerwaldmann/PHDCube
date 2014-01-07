@@ -74,8 +74,9 @@ public:
 
         spinBoxSpread = new QSpinBox(GraphicalWidget);
         spinBoxSpread->setObjectName(QStringLiteral("spinBoxSpread"));
-        spinBoxSpread->setMinimum(1);
+        spinBoxSpread->setMinimum(0);
         spinBoxSpread->setMaximum(100);
+        spinBoxSpread->setValue(0);
 
         horizontalLayout->addWidget(spinBoxSpread);
 

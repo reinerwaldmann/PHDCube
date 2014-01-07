@@ -135,10 +135,6 @@ void GraphicalWidget::pregen()
 
 {
 
-    generateEllipse();
-
-
-transformToRingList();
 
 
 //QGraphicsLineItem* rect = scene->addLine(-10, 0, 500,500);
@@ -220,16 +216,6 @@ for (int x=xright-1; x>xleft; x--)
 
 
 QGraphicsPolygonItem * polygonitem = scene->addPolygon(polygon);
-
-
-/*
-
-if ( QGraphicsItem *item =ui->graphicsView->itemAt(40+200+10, -70+80/2)  )
-{
-
-    qDebug ("zero-zero is in a polygon" );
-}
-*/
 
 
 }
@@ -357,52 +343,13 @@ for (int x=xleft; x<xright+1; x+=1)
     dots.insertMulti(x, -1 *  (shuffle+  sqrt(  fabs(    (((double) 1-(x*x)/(a*a))*(b*b) ) ) ) ));
 
 
-    qDebug( QString::number( dots.values(x)[0]).toUtf8()  );
+/*    qDebug( QString::number( dots.values(x)[0]).toUtf8()  );
     qDebug( QString::number( dots.values(x)[1]).toUtf8()  );
-
-
-
-
-}
-
-/*
-int xx;
-
-QString rr;
-
-
-foreach (xx, dots.keys())
-{
-
-rr.append( QString::number(xx).toUtf8());
-rr.append( ";")   ;
-
-
-rr.append(  QString::number(dots.values(xx)[0]));
-rr.append( ";")   ;
-
-
-
-    if (dots.values(xx).size()>1)
-    {
-
-        rr.append(  QString::number(dots.values(xx)[1]));
-
-        rr.append( "\n")   ;
-    }
-
-
-
-
-
-}
-    qDebug (rr.toUtf8());
-
 */
-//exit (0);
 
 
-interpolation();
+
+}
 
 
 }
@@ -414,46 +361,84 @@ interpolation();
 
 void GraphicalWidget::on_pushButton_2_clicked()
 {
-supersearch();
+    scene->clear(); //очистка сцены
+
+    qDebug ("Scene cleared");
+
+    generateEllipse(); //генерация эллипса
+
+     qDebug ("Ellipse generated");
+
+    transformToRingList(); //записываем все точки эллипса в кольцевой список
+
+    qDebug ("Transformed to ring list");
+
+    interpolation(); //интерполируем
+
+    foreach (dot t, ringList)
+
+    {
+        qDebug( QString::number( t.x).toUtf8() + "\t" + QString::number( t.y).toUtf8()       );
+
+
+
+
+
+    }
+
+
+    qDebug ("Interpolated");
+
+    pregen();  //всё рисуем на экране
+
+    qDebug ("Pregen successful");
+
+    supersearch(); //производим поиск
+
+    qDebug ("Supersearched successful");
+
 }
 
 
 bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellipse border? 1 - yeah 0 - nope
 {
+//радиус, в котором считаем, что точка принадлежит эллипсу - 1, так как дискрет 1
+    //это соответствует floor
 
-    int paranoid=4;
 
-    if (!dots.contains(x))
+    foreach  (dot t, dotslist)
     {
-       /* qDebug ("shit happens");
-        qDebug (QString::number(x).toUtf8());
-       */ return 0;
+        if ( (floor(t.x)==x ) && (floor(t.y)==y)) return 1;
 
     }
 
-    if  (( (double)y>dots.values(x)[0]-paranoid )&&( (double)y<dots.values(x)[0]+paranoid )) return 1;
-
-    if (dots.values(x).size()>1)
-    {
-        if  (( (double)y>dots.values(x)[1]-paranoid )&&( y<dots.values(x)[1]+paranoid )) return 1;
-
-    }
+    return 0 ;
 
 
-return 0;
 
+    //прямое сравнение такого типа производит кирпич
+    //if (dotslist.contains(dot (x,y   ))) return 1; return 0;
 
 
 /*
-    int x1 = x;
-    int y1= y;
 
-      double t = (x1*x1) / (a*a) + (y1*y1) / (b*b);
-      return ((t>0.99)&&(t<1.01))  ;
-
-
+    int paranoid=4;
+    if (!dots.contains(x))
+    {
+        return 0;
+    }
+    if  (( (double)y>dots.values(x)[0]-paranoid )&&( (double)y<dots.values(x)[0]+paranoid )) return 1;
+    if (dots.values(x).size()>1)
+    {
+        if  (( (double)y>dots.values(x)[1]-paranoid )&&( y<dots.values(x)[1]+paranoid )) return 1;
+    }
+return 0;
 */
 
+
+/* qDebug ("shit happens");
+ qDebug (QString::number(x).toUtf8());
+*/
 
 }
 
@@ -658,11 +643,6 @@ if (y==yhigh)
 
  void GraphicalWidget::supersearch()
  {
-     scene->clear();
-     //on_pushButton_clicked();
-
-
-     pregen();
 
 
 
@@ -732,195 +712,40 @@ return 1;
     QHash <int, double>  dots;
     QList <dot> dotslist; //mising y points interpolized
 */
+//ringList - список кольцевой, от левой точки по часовой стрелке.
 
+     double i; //это станет х при интерполяции
+     double fi; //это станет f(x) опять же при интерполяции
 
-      for (int x=0; k<ringList.size(); x++)
+  for (int index=0; index<ringList.size()-1; index++)
      {
-        dotslist.append(ringList.at(x));
+        dotslist.append(ringList.at(index));//добавить точку
 
-        //FIRST PART: POSITIVE
-        int i;
-           if (ringList.at(x)<ringList.at(x+1)-1)
-            {
-            //for (int i=dots.values(x)[0]+1; i<dots.values(x+1)[0]-1; i++)
+        //список - кольцевой, и  значения х там изменяются на 1, что в положительной, что в отрицательной
+          //части. Стало быть, у у там должен быть тоже дискрет 1. Если это не так, то
+          //интерполируем линейно.
 
-               i=ringList.at(x);
+        ///!!!!!! при интерполяции  в данном случае x и y  меняются местами!!!!!
+
+          if (  fabs(ringList.at(index).y-ringList.at(index+1).y)>1 ) //если модуль разности между двумя соседними значениями y более 1
+          {
+                i=ringList.at(index).y; //принимаем первую точку за начало интерполяции
             do
                {
-                dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-               qDebug ("First part:" );
-                qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
-                qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
+                   i++;
+                   fi=ringList.at(index).x +  (i- ringList.at(index).x) * (ringList.at(index+1).y-ringList.at(index).y)/(ringList.at(index+1).x-ringList.at(index).x);
+                   dotslist.append(dot (i,fx));
 
-            }
-               while (i<ringList.at(x+1)-1);
-
-            }
-
-
-
-        if (ringList.at(x)>ringList.at(x+1)+1)
-            {
-
-              i=ringList.at(x)-1;
-
-           do {
-                dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-
-               /* qDebug ("Second part:" );
-                qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
+   /*              qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
-                i--;
-            }
 
-            while (i>dots.values(x+1)[0]+1);
             }
+               while (fabs (i-ringList.at(index+1).y)<=1);
 
+            }
      }
 
 return;
 
-
-
-
-
-
-     dotslist.append(dot(xleft, 0));
-     for (int x=xleft; x<xright; x++)
-     {
-
-
-         if (!dots.count(x))
-         {
-                continue;
-         }
-
-
-
-         if (!dots.count(x+1))
-         {
-               continue;
-         }
-
-
-         dotslist.append (dot (x, dots.values(x)[0]));
-
-         qDebug ("Known Point:" );
-         qDebug (QString::number(x).toUtf8() );
-         qDebug (QString::number(dots.values(x)[0]).toUtf8() );
-         qDebug ("--" );
-  /*       qDebug ("EndOfInterpolation:" );
-         qDebug (QString::number(x+1).toUtf8() );
-         qDebug (QString::number(dots.values(x+1)[0]).toUtf8() );
-         qDebug ("--" );
-*/
-
-
-
-
-
-         if (dots.values(x)[0]<dots.values(x+1)[0]-1)
-             {
-             for (int i=dots.values(x)[0]+1; i<dots.values(x+1)[0]-1; i++)
-                {
-                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-
-                qDebug ("First part:" );
-                 qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
-                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
-
-
-
-
-             }
-
-             }
-
-
-
-         if (dots.values(x)[0]>dots.values(x+1)[0]+1)
-             {
-
-
-
-             /*for (int i=dots.values(x)[0]-1; i>dots.values(x+1)[0]+1;)
-                {
-                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-
-                 qDebug ("Second part:" );
-                  qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
-                  qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );
-
-
-                }
-
-             */
-
-             int i=dots.values(x)[0]-1;
-
-            do {
-                 dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[0]-dots.values(x)[0]  )  )*(i-dots.values(x)[0]), i ));
-
-                /* qDebug ("Second part:" );
-                 qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
-                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
-                 i--;
-             }
-
-             while (i>dots.values(x+1)[0]+1);
-
-
-
-             }
-
-
-
-
-
-
-
-     }
-
-
-
-     dotslist.append(dot(xright, 0));
-
-
-     for (int x=xright; x>xleft; x--)
-     {
-         if (!dots.count(x))
-         {
-               continue;
-         }
-
-
-         if (!dots.count(x-1))
-         {
-               continue;
-         }
-
-//dotslist.append (dot (x, dots.values(x)[1]));
-
-      /*   for (int i=dots.values(x)[1]; i<dots.values(x-1)[1]-1; i++)
-            {
-             dotslist.append(dot (x+(  (x+1-x)/(dots.values(x+1)[1]-dots.values(x)[1]  )  )*(i-dots.values(x)[1]), i ));
-            }
-*/
-     }
-
-
-//for debugging
-
-/*
-     foreach (dot t, dotslist)
-     {
-         qDebug ("x=" );
-         qDebug (QString::number(t.x).toUtf8() );
-         qDebug ("y=" );
-         qDebug (QString::number(t.y).toUtf8() );
-         qDebug ( "\n");
-
-     }
-*/
 
  }
