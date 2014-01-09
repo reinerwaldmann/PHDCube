@@ -734,7 +734,7 @@ return 1;
                {
                    i++;
                    fi=ringList.at(index).x +  (i- ringList.at(index).x) * (ringList.at(index+1).y-ringList.at(index).y)/(ringList.at(index+1).x-ringList.at(index).x);
-                   dotslist.append(dot (i,fx));
+                   dotslist.append(dot (i,fi));
 
    /*              qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
                 qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
