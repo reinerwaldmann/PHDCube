@@ -87,7 +87,7 @@ void GraphicalWidget::transformToRingList()
 
 
     ringList.append (dot  (-100,100  )  );
-            ringList.append (dot  (500,100  )  );
+            ringList.append (dot  (500,150  )  );
             ringList.append (dot  (200,-200  )  );
             ringList.append (dot  (-130,-110  )  );
 

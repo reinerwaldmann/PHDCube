@@ -77,6 +77,9 @@ public:
 
 
 
+
+
+
     QGraphicsLineItem   * linesearchtr;
     QGraphicsLineItem   * linesearchtl;
     QGraphicsLineItem   * linesearchb;
