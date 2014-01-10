@@ -85,6 +85,18 @@ void GraphicalWidget::transformToRingList()
 {
 //from ellipse list to the ring list
 
+
+    ringList.append (dot  (-100,100  )  );
+            ringList.append (dot  (500,100  )  );
+            ringList.append (dot  (200,-200  )  );
+            ringList.append (dot  (-130,-110  )  );
+
+
+    return;
+
+
+
+
     ringList.append(dot(xleft,0));
 
 
@@ -375,7 +387,7 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     interpolation(); //интерполируем
 
-    foreach (dot t, ringList)
+    foreach (dot t, dotslist)
 
     {
         qDebug( QString::number( t.x).toUtf8() + "\t" + QString::number( t.y).toUtf8()       );
@@ -408,7 +420,7 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
 
     foreach  (dot t, dotslist)
     {
-        if ( (floor(t.x)==x ) && (floor(t.y)==y)) return 1;
+        if ( (qFloor(t.x)==x ) && (qFloor(t.y)==y)) return 1;
 
     }
 
@@ -618,8 +630,8 @@ if (y==yhigh)
         if (var.S > Smax)
         {
 
-            if (var.S< maxS  )
-
+            //if (var.S< maxS  )
+            if (1)
             {   Smax = var.S;
                 maxsrecord = var; }
         }
@@ -654,7 +666,7 @@ if (y==yhigh)
      y=1;
 
 
-     timer->start(500);
+     timer->start(1);
 
 
 
@@ -727,20 +739,20 @@ return 1;
 
         ///!!!!!! при интерполяции  в данном случае x и y  меняются местами!!!!!
 
-          if (  fabs(ringList.at(index).y-ringList.at(index+1).y)>1 ) //если модуль разности между двумя соседними значениями y более 1
+        if (  fabs( qFloor ( ringList.at(index).y)  - qFloor(ringList.at(index+1).y)  )>1 ) //если модуль разности между двумя соседними значениями y более 1
           {
                 i=ringList.at(index).y; //принимаем первую точку за начало интерполяции
             do
                {
                    i++;
-                   fi=ringList.at(index).x +  (i- ringList.at(index).x) * (ringList.at(index+1).y-ringList.at(index).y)/(ringList.at(index+1).x-ringList.at(index).x);
-                   dotslist.append(dot (i,fx));
+                   fi=ringList.at(index).x +  (i- ringList.at(index).y) * (ringList.at(index+1).x-ringList.at(index).x)/(ringList.at(index+1).y-ringList.at(index).y);
+                   dotslist.append(dot (fi,i));
 
-   /*              qDebug (QString::number(dotslist.at(dotslist.size()-1).x).toUtf8() );
-                qDebug (QString::number(dotslist.at(dotslist.size()-1).y).toUtf8() );*/
 
             }
-               while (fabs (i-ringList.at(index+1).y)<=1);
+                //while (fabs (qFloor (i)  -  qFloor ( ringList.at(index+1).y) )>1);
+
+                while (i  <    ringList.at(index+1).y );
 
             }
      }
