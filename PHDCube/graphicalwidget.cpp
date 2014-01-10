@@ -387,8 +387,7 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     interpolation(); //интерполируем
 
-
-   foreach (dot t, dotslist)
+    foreach (dot t, dotslist)
 
     {
         qDebug( QString::number( t.x).toUtf8() + "\t" + QString::number( t.y).toUtf8()       );
@@ -746,20 +745,14 @@ return 1;
             do
                {
                    i++;
-<<<<<<< HEAD
                    fi=ringList.at(index).x +  (i- ringList.at(index).y) * (ringList.at(index+1).x-ringList.at(index).x)/(ringList.at(index+1).y-ringList.at(index).y);
                    dotslist.append(dot (fi,i));
-=======
-                   fi=ringList.at(index).x +  (i- ringList.at(index).x) * (ringList.at(index+1).y-ringList.at(index).y)/(ringList.at(index+1).x-ringList.at(index).x);
-                   dotslist.append(dot (i,fi));
->>>>>>> e9f5c16f1d52500e221733a98eb1bc9e7cd57f96
 
 
             }
                 //while (fabs (qFloor (i)  -  qFloor ( ringList.at(index+1).y) )>1);
 
-          
-      while (i  <    ringList.at(index+1).y );
+                while (i  <    ringList.at(index+1).y );
 
             }
      }
