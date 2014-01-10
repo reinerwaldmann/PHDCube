@@ -28,6 +28,8 @@ struct dot {
     y=0;
     }
 
+    QString o() {return QString("x=%1 y=%2").arg(QString::number(x)).arg(QString::number(y));  }
+
             double x; double y;};
 
 struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
@@ -75,6 +77,11 @@ public:
     /* делает границу области непрерывной и по x и по y в дискрете 1 */
 
 
+//searches for rightmost, leftmost, topmost, bottommost dots.
+    /**they are used as the limiters while searching for the edges
+     */
+    void findExtremes();
+
 
 
 
@@ -103,11 +110,20 @@ public:
     QGraphicsScene  * scene;
 
 
+
     //cordinates of the extremes
     double  xleft;
     double xright;
     double ylow;
     double yhigh;
+
+    //at the newer version - coordinates of the edge dots
+    dot rightmost, leftmost, topmost, bottommost;
+
+
+
+
+
 
 
     //coeffs of the ellipse (at this version the area is an ellipse

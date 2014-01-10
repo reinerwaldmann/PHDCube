@@ -85,11 +85,12 @@ void GraphicalWidget::transformToRingList()
 {
 //from ellipse list to the ring list
 
+    ringList.clear();
 
-    ringList.append (dot  (-100,100  )  );
-            ringList.append (dot  (500,150  )  );
-            ringList.append (dot  (200,-200  )  );
-            ringList.append (dot  (-130,-110  )  );
+    ringList.append (dot  (-30,30  )  );
+            ringList.append (dot  (50,15  )  );
+            ringList.append (dot  (20,-20  )  );
+            ringList.append (dot  (-13,-11  )  );
 
 
     return;
@@ -387,17 +388,17 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     interpolation(); //интерполируем
 
-    foreach (dot t, dotslist)
+
+
+    findExtremes(); //находим границы
+
+  /*  foreach (dot t, dotslist)
 
     {
         qDebug( QString::number( t.x).toUtf8() + "\t" + QString::number( t.y).toUtf8()       );
 
-
-
-
-
     }
-
+*/
 
     qDebug ("Interpolated");
 
@@ -486,11 +487,15 @@ return 0;
 
 void GraphicalWidget::search(double iy)
 {
+    int prn=0; //paranoid when limiting the movement
+
 dot rt, lt, rb, lb;
 double S (0);
 
 double y = iy;
 //int y = 20;
+
+
 
 
 
@@ -501,7 +506,8 @@ double y = iy;
 //{
 
 //go right
-for (int x=0; x<xright+10; x++)
+for (int x=0; x<rightmost.x+prn; x++)
+//    for (int x=0; x<xright+10; x++)
 {
     linesearchtr->setLine(0,y,x,y);
 
@@ -511,14 +517,11 @@ for (int x=0; x<xright+10; x++)
     rb.y=y;
     break;
     }
-
 }
 
-
-
-
     //go left
-        for (int x=0; x>xleft-10; x--)
+        for (int x=0; x>leftmost.x-prn; x--)
+            //for (int x=0; x>xleft-10; x--)
         {
             linesearchtl->setLine(0,y,x,y);
 
@@ -533,7 +536,11 @@ for (int x=0; x<xright+10; x++)
 
 //left-top
 
-        for (int y=lb.y-2; y>lb.y-100;y--)  //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
+        for (int y=lb.y-1; y>bottommost.y-prn;y--)  //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
+
+                    //for (int y=lb.y-2; y>lb.y-100;y--) //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
+
+
         {
                 linesearchl->setLine(lb.x, lb.y, lb.x, y);
                 lt.x=lb.x;
@@ -552,7 +559,9 @@ for (int x=0; x<xright+10; x++)
 
 //right-top
 
-        for (int y=rb.y-2; y>rb.y-100;y--)   //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
+        for (int y=rb.y-1; y>bottommost.y-prn;y--)   //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
+
+         //                   for (int y=rb.y-2; y>rb.y-100;y--) //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
         {
                 linesearchr->setLine(rb.x, rb.y, rb.x, y);
                 rt.x=rb.x;
@@ -663,10 +672,21 @@ if (y==yhigh)
      connect(timer, SIGNAL(timeout()), this, SLOT(onTimerTicked()));
 
 
-     y=1;
+//     y=bottommost.y; //категорически неправильно!!!!
 
 
-     timer->start(1);
+     double toppoint=0;
+
+     foreach (dot t, dotslist)
+     {
+         if (t.x==0) { toppoint=qMin(t.y, toppoint); }
+
+     }
+
+
+     y=toppoint;
+
+     timer->start(10);
 
 
 
@@ -729,6 +749,8 @@ return 1;
      double i; //это станет х при интерполяции
      double fi; //это станет f(x) опять же при интерполяции
 
+     dotslist.clear();
+
   for (int index=0; index<ringList.size()-1; index++)
      {
         dotslist.append(ringList.at(index));//добавить точку
@@ -758,6 +780,43 @@ return 1;
      }
 
 return;
+
+
+ }
+
+
+
+
+ //searches for rightmost, leftmost, topmost, bottommost dots.
+     /**they are used as the limiters while searching for the edges
+TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
+*/
+ void GraphicalWidget::findExtremes()
+ {
+     topmost=bottommost=leftmost=rightmost=dot(0,0);
+
+
+     foreach (dot d, dotslist)
+     {
+         if (d.y>topmost.y) {topmost=d;}
+         if (d.y<bottommost.y) {bottommost=d;}
+         if (d.x>rightmost.x) {rightmost=d;}
+         if (d.x<leftmost.x) {leftmost=d;}
+
+     }
+
+     qDebug ("topmost");
+    qDebug (topmost.o().toUtf8());
+
+    qDebug ("bottommost");
+    qDebug (bottommost.o().toUtf8());
+
+
+    qDebug ("leftmost");
+    qDebug (leftmost.o().toUtf8());
+
+    qDebug ("rightmost");
+    qDebug (rightmost.o().toUtf8());
 
 
  }
