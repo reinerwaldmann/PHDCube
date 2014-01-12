@@ -16,7 +16,7 @@ GraphicalWidget::GraphicalWidget(QWidget *parent) :
     xleft=-100;
     xright=100;
      ylow=-50;
-     yhigh=50;
+     yhigh=-50;
     a = 100;
      b = 50;
 
@@ -86,7 +86,7 @@ void GraphicalWidget::transformToRingList()
 //from ellipse list to the ring list
 
     ringList.clear();
-
+/*
     ringList.append (dot  (-30,30  )  );
             ringList.append (dot  (50,15  )  );
             ringList.append (dot  (20,-20  )  );
@@ -96,7 +96,7 @@ void GraphicalWidget::transformToRingList()
     return;
 
 
-
+*/
 
     ringList.append(dot(xleft,0));
 
@@ -158,7 +158,7 @@ ui->graphicsView->setScene(scene);
 ui->graphicsView->show();
 
 QGraphicsLineItem* line = scene->addLine(0, -100, 0, 100, QPen (Qt::blue));
-QGraphicsLineItem* line1 = scene->addLine(-300, 0, 300, 0, QPen (Qt::blue));
+QGraphicsLineItem* line1 = scene->addLine(-100, 0, 100, 0, QPen (Qt::blue));
 
 
 
@@ -180,7 +180,12 @@ QPolygonF  polygon;
 
 foreach (dot d, ringList)
 {
-    polygon<<QPointF(d.x, d.y);
+    //polygon<<QPointF(d.x, d.y);
+
+    //отобразим полигон  в привычных координатах
+
+    polygon<<QPointF(d.x, -1*d.y);
+
 
 }
 
@@ -388,6 +393,14 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     interpolation(); //интерполируем
 
+      foreach (dot t, ringList)
+
+      {
+          con1 (tr ("x=%1 y=%2").arg(QString::number(t.x)).arg (QString::number(t.y) ) );
+
+
+
+      }
 
 
     findExtremes(); //находим границы
@@ -419,6 +432,31 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
     //это соответствует floor
 
 
+    /*ещё вариант, на сей раз с идеей, что, если данная точка оказывается на одной
+     *прямой с двумя соседними точками из ringList, то она находится на границе полигона
+     *
+     */
+
+    for (int i=0; i<ringList.size()-2; i++)
+    {
+
+        if ((y-ringList.at(i).y)/(ringList.at(i+1).y-ringList.at(i).y) ==(x-ringList.at(i).x)/(ringList.at(i+1).x-ringList.at(i).x))
+        {
+            return 1;
+        }
+
+    }
+
+
+    if ((y-ringList.at(  ringList.size()-1   ).y)/(ringList.at(0).y-ringList.at(ringList.size()-1).y) ==(x-ringList.at(ringList.size()-1).x)/(ringList.at(0).x-ringList.at(ringList.size()-1).x))
+    return 1;
+
+
+    return 0;
+
+/*
+
+
     foreach  (dot t, dotslist)
     {
         if ( (qFloor(t.x)==x ) && (qFloor(t.y)==y)) return 1;
@@ -426,7 +464,7 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
     }
 
     return 0 ;
-
+*/
 
 
     //прямое сравнение такого типа производит кирпич
@@ -497,7 +535,7 @@ double y = iy;
 
 
 
-
+con1(tr("search y=%1").arg(iy));
 
 
 //int y =20; //начнём с этого
@@ -509,7 +547,9 @@ double y = iy;
 for (int x=0; x<rightmost.x+prn; x++)
 //    for (int x=0; x<xright+10; x++)
 {
-    linesearchtr->setLine(0,y,x,y);
+    linesearchtr->setLine(0,-1*y,x,-1*y);
+
+    //linesearchtr->setLine(0,y,x,y);
 
     if (belongsToEllipse(x,y))
     {
@@ -523,7 +563,8 @@ for (int x=0; x<rightmost.x+prn; x++)
         for (int x=0; x>leftmost.x-prn; x--)
             //for (int x=0; x>xleft-10; x--)
         {
-            linesearchtl->setLine(0,y,x,y);
+//            linesearchtl->setLine(0,y,x,y);
+            linesearchtl->setLine(0,-1*y,x,-1*y);
 
             if (belongsToEllipse(x,y))
             {
@@ -542,7 +583,12 @@ for (int x=0; x<rightmost.x+prn; x++)
 
 
         {
-                linesearchl->setLine(lb.x, lb.y, lb.x, y);
+                //linesearchl->setLine(lb.x, lb.y, lb.x, y);
+                linesearchl->setLine(lb.x, -1*lb.y, lb.x, -1*y);
+
+
+
+
                 lt.x=lb.x;
 
 
@@ -563,7 +609,7 @@ for (int x=0; x<rightmost.x+prn; x++)
 
          //                   for (int y=rb.y-2; y>rb.y-100;y--) //граничное условие - ЛАЖОВОЕ ПЕРЕДЕЛАТЬ БЫСТРОА!!!!!!
         {
-                linesearchr->setLine(rb.x, rb.y, rb.x, y);
+                linesearchr->setLine(rb.x, -1*rb.y, rb.x, -1*y);
                 rt.x=rb.x;
 
 
@@ -585,7 +631,7 @@ for (int x=0; x<rightmost.x+prn; x++)
          rt.y=ymin;
          lt.y=ymin;
 
-linesearchb->setLine(rt.x, rt.y, lt.x, lt.y);
+linesearchb->setLine(rt.x, -1*rt.y, lt.x, -1*lt.y);
 
 S =fabs ( (rb.y - rt.y) * (rt.x-lt.x) );
 
@@ -624,7 +670,7 @@ records.append(rr);
 
 
 
-if (y==yhigh)
+if (y==ylow)
 {
 
     //максимально возможная площадь, хто больше - невалиден
@@ -649,9 +695,11 @@ if (y==yhigh)
     qDebug ("Biggest S ");
     qDebug (QString::number(Smax).toUtf8());
 
-    QPointF tlQ (maxsrecord.lt.x, maxsrecord.lt.y);
-    QPointF brQ (maxsrecord.rb.x, maxsrecord.rb.y);
+    QPointF tlQ (maxsrecord.lt.x, -1*maxsrecord.lt.y);
+    QPointF brQ (maxsrecord.rb.x, -1*maxsrecord.rb.y);
     QGraphicsRectItem * rrrect =   scene->addRect(QRectF (tlQ, brQ), QPen (Qt::red));
+
+update();
 }
 
 
@@ -679,22 +727,31 @@ if (y==yhigh)
 
      foreach (dot t, dotslist)
      {
-         if (t.x==0) { toppoint=qMin(t.y, toppoint); }
+
+
+         if (t.x==0) { toppoint=qMax(t.y, toppoint);  }
 
      }
 
 
+     con (tr("Toppoint.y=%1").arg(QString::number(toppoint)));
+
+
      y=toppoint;
 
-     timer->start(10);
 
 
 
- linesearchtr = scene->addLine(0, y, 1,y);
-     linesearchtl = scene->addLine(0, y, 1,y);
-      linesearchb = scene->addLine(0, y, 1,y);
-     linesearchr = scene->addLine(0, y, 1,y);
-     linesearchl = scene->addLine(0, y, 1,y);
+
+     timer->start(100);
+
+
+
+ linesearchtr = scene->addLine(0, -1*y, 1,-1*y);
+     linesearchtl = scene->addLine(0, -1*y, 1,-1*y);
+      linesearchb = scene->addLine(0, -1*y, 1,-1*y);
+     linesearchr = scene->addLine(0, -1*y, 1,-1*y);
+     linesearchl = scene->addLine(0, -1*y, 1,-1*y);
 
 
 
@@ -707,9 +764,13 @@ if (y==yhigh)
  {
 
      search(y);
-     y++;
-     if (y>yhigh)
+     y--;
+     if (y<ylow)
+
         {
+
+         con1(tr("Timer stopped, yhigh=%1 reached").arg(QString::number(yhigh)));
+
          timer->stop();
 
 
@@ -820,3 +881,19 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
 
 
  }
+
+ void GraphicalWidget::con(QString msg)
+ {
+
+     ui->textEdit->append(msg);
+
+ }
+
+ void GraphicalWidget::con1(QString msg)
+ {
+
+     ui->textEdit_2->append(msg);
+
+ }
+
+

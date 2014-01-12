@@ -61,6 +61,9 @@ public:
 
 
 
+    void con (QString msg);
+    void con1 (QString msg);
+
 
     void search(double iy);
 

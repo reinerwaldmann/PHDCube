@@ -14,12 +14,13 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
 #include <QtWidgets/QGraphicsView>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
-#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -27,8 +28,7 @@ QT_BEGIN_NAMESPACE
 class Ui_GraphicalWidget
 {
 public:
-    QVBoxLayout *verticalLayout;
-    QGraphicsView *graphicsView;
+    QGridLayout *gridLayout;
     QHBoxLayout *horizontalLayout;
     QPushButton *scaleMinus;
     QPushButton *pushButton;
@@ -36,19 +36,17 @@ public:
     QSpinBox *spinBoxSpread;
     QPushButton *pushButton_2;
     QPushButton *scalePlus;
+    QTextEdit *textEdit;
+    QGraphicsView *graphicsView;
+    QTextEdit *textEdit_2;
 
     void setupUi(QWidget *GraphicalWidget)
     {
         if (GraphicalWidget->objectName().isEmpty())
             GraphicalWidget->setObjectName(QStringLiteral("GraphicalWidget"));
-        GraphicalWidget->resize(551, 464);
-        verticalLayout = new QVBoxLayout(GraphicalWidget);
-        verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
-        graphicsView = new QGraphicsView(GraphicalWidget);
-        graphicsView->setObjectName(QStringLiteral("graphicsView"));
-
-        verticalLayout->addWidget(graphicsView);
-
+        GraphicalWidget->resize(912, 283);
+        gridLayout = new QGridLayout(GraphicalWidget);
+        gridLayout->setObjectName(QStringLiteral("gridLayout"));
         horizontalLayout = new QHBoxLayout();
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         scaleMinus = new QPushButton(GraphicalWidget);
@@ -95,7 +93,22 @@ public:
         horizontalLayout->addWidget(scalePlus);
 
 
-        verticalLayout->addLayout(horizontalLayout);
+        gridLayout->addLayout(horizontalLayout, 1, 0, 1, 1);
+
+        textEdit = new QTextEdit(GraphicalWidget);
+        textEdit->setObjectName(QStringLiteral("textEdit"));
+
+        gridLayout->addWidget(textEdit, 0, 1, 1, 1);
+
+        graphicsView = new QGraphicsView(GraphicalWidget);
+        graphicsView->setObjectName(QStringLiteral("graphicsView"));
+
+        gridLayout->addWidget(graphicsView, 0, 0, 1, 1);
+
+        textEdit_2 = new QTextEdit(GraphicalWidget);
+        textEdit_2->setObjectName(QStringLiteral("textEdit_2"));
+
+        gridLayout->addWidget(textEdit_2, 0, 2, 1, 1);
 
 
         retranslateUi(GraphicalWidget);
