@@ -440,7 +440,7 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
     for (int i=0; i<ringList.size()-2; i++)
     {
 
-        if ((y-ringList.at(i).y)/(ringList.at(i+1).y-ringList.at(i).y) ==(x-ringList.at(i).x)/(ringList.at(i+1).x-ringList.at(i).x))
+        if (fabs(   ((double) y-ringList.at(i).y)/(ringList.at(i+1).y-ringList.at(i).y) -  ((double)x-ringList.at(i).x)/(ringList.at(i+1).x-ringList.at(i).x))<=0.1 )
         {
             return 1;
         }
@@ -553,9 +553,10 @@ for (int x=0; x<rightmost.x+prn; x++)
 
     if (belongsToEllipse(x,y))
     {
-    rb.x=x;
-    rb.y=y;
-    break;
+        rb.x=x;
+        rb.y=y;
+
+        break;
     }
 }
 
@@ -653,6 +654,10 @@ rr.lb=lb;
 rr.S = S;
 
 records.append(rr);
+
+
+
+con1(tr("Found rect: rt=%1 %2  lt= %3 %4 rb=%5 %6 lb=%7 %8").arg(rt.x).arg(rt.y).arg(lt.x).arg(lt.y).arg(rb.x).arg(rb.y).arg(lb.x).arg(lb.y));
 
 
 
