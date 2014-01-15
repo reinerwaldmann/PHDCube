@@ -101,6 +101,9 @@ public:
 
 
 
+     //beginning and ending of  the finding process
+    double ytop, ybottom;
+
 
 
 

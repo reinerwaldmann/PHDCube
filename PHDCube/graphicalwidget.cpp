@@ -389,9 +389,11 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     transformToRingList(); //записываем все точки эллипса в кольцевой список
 
-    qDebug ("Transformed to ring list");
+    //qDebug ("Transformed to ring list");
 
     interpolation(); //интерполируем
+
+   findExtremes();
 
       foreach (dot t, ringList)
 
@@ -859,6 +861,7 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
 */
  void GraphicalWidget::findExtremes()
  {
+
      topmost=bottommost=leftmost=rightmost=dot(0,0);
 
 
@@ -885,6 +888,37 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
     qDebug (rightmost.o().toUtf8());
 
 
+//finding     double ytop, ybottom;
+
+
+    QList<double> listOfDotsOnOx;
+
+    for (int i=0; i<ringList.size()-2; i++)
+    {
+        //меньше нуля это произведение может быть только в том случае,
+        //если одно из них меньше 0, а другое больше 0, то есть точки находятся
+        //по разные стороны оу
+
+        if (ringList.at(i).x * ringList.at(i+1).x < 0)
+        {
+         listOfDotsOnOx.append( -1*ringList.at(i).x * (ringList.at(i+1).y - ringList.at(i).y) / (ringList.at(i+1).x-ringList.at(i).x )+ringList.at(i).y );
+        }
+
+
+    }
+
+
+    con1("Extreme dots");
+    foreach (double b, listOfDotsOnOx )
+    {
+        con1(QString::number(b));
+
+    }
+
+
+
+
+
  }
 
  void GraphicalWidget::con(QString msg)
@@ -900,5 +934,6 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
      ui->textEdit_2->append(msg);
 
  }
+
 
 
