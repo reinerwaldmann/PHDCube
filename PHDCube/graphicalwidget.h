@@ -36,6 +36,11 @@ struct rectangleRecord { dot rt; dot lt; dot rb; dot lb; double S;};
 
 
 
+
+
+
+
+
 class GraphicalWidget : public QWidget
 {
     Q_OBJECT
@@ -63,6 +68,12 @@ public:
 
     void con (QString msg);
     void con1 (QString msg);
+
+/*    template  <class Type1> void  con (Type1 number);*/
+
+
+
+
 
 
     void search(double iy);

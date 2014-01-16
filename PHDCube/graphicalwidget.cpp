@@ -87,7 +87,7 @@ void GraphicalWidget::transformToRingList()
 
     ringList.clear();
 /*
-    ringList.append (dot  (-30,30  )  );
+            ringList.append (dot  (-30,30  )  );
             ringList.append (dot  (50,15  )  );
             ringList.append (dot  (20,-20  )  );
             ringList.append (dot  (-13,-11  )  );
@@ -95,8 +95,8 @@ void GraphicalWidget::transformToRingList()
 
     return;
 
-
 */
+
 
     ringList.append(dot(xleft,0));
 
@@ -391,19 +391,15 @@ void GraphicalWidget::on_pushButton_2_clicked()
 
     //qDebug ("Transformed to ring list");
 
-    interpolation(); //интерполируем
+    //interpolation(); //интерполируем
 
-   findExtremes();
 
-      foreach (dot t, ringList)
+  /*    foreach (dot t, ringList)
 
       {
           con1 (tr ("x=%1 y=%2").arg(QString::number(t.x)).arg (QString::number(t.y) ) );
-
-
-
       }
-
+*/
 
     findExtremes(); //находим границы
 
@@ -439,7 +435,7 @@ bool GraphicalWidget::belongsToEllipse (int x, int y)  //does it belong to ellip
      *
      */
 
-    for (int i=0; i<ringList.size()-2; i++)
+    for (int i=0; i<ringList.size()-1; i++)
     {
 
         if (fabs(   ((double) y-ringList.at(i).y)/(ringList.at(i+1).y-ringList.at(i).y) -  ((double)x-ringList.at(i).x)/(ringList.at(i+1).x-ringList.at(i).x))<=0.1 )
@@ -660,25 +656,18 @@ records.append(rr);
 
 
 con1(tr("Found rect: rt=%1 %2  lt= %3 %4 rb=%5 %6 lb=%7 %8").arg(rt.x).arg(rt.y).arg(lt.x).arg(lt.y).arg(rb.x).arg(rb.y).arg(lb.x).arg(lb.y));
-
-
-
-//break;
-
-
-
-//sleep(1);
+con1 (tr("Found S=%1").arg(QString::number(S)));
 
 
 
 
-//}
-
-
-
-
-if (y==ylow)
+if (y<=ybottom)
 {
+
+    con1(tr("Timer stopped, yhigh=%1 reached").arg(QString::number(yhigh)));
+
+    timer->stop();
+
 
     //максимально возможная площадь, хто больше - невалиден
     double maxS= ( fabs    (yhigh - ylow) ) * (fabs (xright - xleft) );
@@ -701,12 +690,11 @@ if (y==ylow)
 
     qDebug ("Biggest S ");
     qDebug (QString::number(Smax).toUtf8());
-
+    con(tr("\n\n[Maximum S=%1]").arg(QString::number(Smax)));
     QPointF tlQ (maxsrecord.lt.x, -1*maxsrecord.lt.y);
     QPointF brQ (maxsrecord.rb.x, -1*maxsrecord.rb.y);
     QGraphicsRectItem * rrrect =   scene->addRect(QRectF (tlQ, brQ), QPen (Qt::red));
-
-update();
+    update();
 }
 
 
@@ -730,29 +718,12 @@ update();
 //     y=bottommost.y; //категорически неправильно!!!!
 
 
-     double toppoint=0;
-
-     foreach (dot t, dotslist)
-     {
-
-
-         if (t.x==0) { toppoint=qMax(t.y, toppoint);  }
-
-     }
-
-
-     con (tr("Toppoint.y=%1").arg(QString::number(toppoint)));
-
-
-     y=toppoint;
 
 
 
-
+     y=ytop;
 
      timer->start(100);
-
-
 
  linesearchtr = scene->addLine(0, -1*y, 1,-1*y);
      linesearchtl = scene->addLine(0, -1*y, 1,-1*y);
@@ -772,16 +743,6 @@ update();
 
      search(y);
      y--;
-     if (y<ylow)
-
-        {
-
-         con1(tr("Timer stopped, yhigh=%1 reached").arg(QString::number(yhigh)));
-
-         timer->stop();
-
-
-        }
 
  }
 
@@ -865,7 +826,7 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
      topmost=bottommost=leftmost=rightmost=dot(0,0);
 
 
-     foreach (dot d, dotslist)
+     foreach (dot d, ringList)
      {
          if (d.y>topmost.y) {topmost=d;}
          if (d.y<bottommost.y) {bottommost=d;}
@@ -874,18 +835,11 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
 
      }
 
-     qDebug ("topmost");
-    qDebug (topmost.o().toUtf8());
 
-    qDebug ("bottommost");
-    qDebug (bottommost.o().toUtf8());
-
-
-    qDebug ("leftmost");
-    qDebug (leftmost.o().toUtf8());
-
-    qDebug ("rightmost");
-    qDebug (rightmost.o().toUtf8());
+     con (tr ("topmost=%1").arg(topmost.o()));
+     con (tr ("bottommost=%1").arg(bottommost.o()));
+     con (tr ("leftmost=%1").arg(leftmost.o()));
+     con (tr ("rightmost=%1").arg(rightmost.o()));
 
 
 //finding     double ytop, ybottom;
@@ -893,30 +847,56 @@ TO BE LAUCHED ONLY AFTER THE INTERPOLATION!!!!!!!!!!!!!!!!
 
     QList<double> listOfDotsOnOx;
 
-    for (int i=0; i<ringList.size()-2; i++)
+    for (int i=0; i<ringList.size()-1; i++)
     {
         //меньше нуля это произведение может быть только в том случае,
         //если одно из них меньше 0, а другое больше 0, то есть точки находятся
         //по разные стороны оу
 
+
+        //con (tr ("dotsfirst %1 %2").arg(ringList.at(i).x ).arg(ringList.at(i+1).x));
+
+
         if (ringList.at(i).x * ringList.at(i+1).x < 0)
         {
-         listOfDotsOnOx.append( -1*ringList.at(i).x * (ringList.at(i+1).y - ringList.at(i).y) / (ringList.at(i+1).x-ringList.at(i).x )+ringList.at(i).y );
+         listOfDotsOnOx.append(  (double)-1*ringList.at(i).x * (ringList.at(i+1).y - ringList.at(i).y) / (ringList.at(i+1).x-ringList.at(i).x )+ringList.at(i).y );
         }
 
+        if (ringList.at(i).x==0)  listOfDotsOnOx.append(ringList.at(i).y);
+    }
+
+
+    int last = ringList.size()-1;
+
+    con (tr ("dots %1 %2").arg(ringList.at(last).x ).arg(ringList.at(0).x));
+if (ringList.at(last).x*ringList.at(0).x<0 )
+    {
+
+
+
+
+
+listOfDotsOnOx.append( (double)-1*ringList.at(last).x * (ringList.at(0).y - ringList.at(last).y) / (ringList.at(0).x-ringList.at(last).x )+ringList.at(last).y );
 
     }
 
 
-    con1("Extreme dots");
+    con("Extreme dots");
+
+    ytop=ybottom=0;
+
     foreach (double b, listOfDotsOnOx )
     {
-        con1(QString::number(b));
+
+        ytop = qMax(ytop, b);
+        ybottom = qMin(ybottom, b);
+
+
+        con(QString::number(b));
 
     }
 
-
-
+    con(tr("ytop=%1 ybottom=%2").arg(QString::number(ytop)).arg(QString::number(ybottom)));
 
 
  }
